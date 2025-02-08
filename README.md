@@ -32,6 +32,20 @@
 $ npm install
 ```
 
+## initialization of database
+
+```bash
+# .env
+$ create a .env file
+
+# init environment variables
+$ DB_NAME=trello
+$ DB_HOST=localhost
+$ DB_PORT=5432
+$ DB_USERNAME=*****
+$ DB_PASSWORD==*****
+```
+
 ## Compile and run the project
 
 ```bash
