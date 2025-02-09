@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { HashingService } from '../utils/hashing/hashing.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { HashingModule } from '../utils/hashing/hashing.module';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -15,6 +16,8 @@ describe('UsersService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [HashingModule],
+
       providers: [
         UsersService,
         {
