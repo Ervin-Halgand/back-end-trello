@@ -9,5 +9,6 @@ import { HashingModule } from '../utils/hashing/hashing.module';
   imports: [SequelizeModule.forFeature([User]), HashingModule],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [UsersService],
 })
 export class UsersModule {}

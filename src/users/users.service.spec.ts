@@ -108,4 +108,29 @@ describe('UsersService', () => {
     const result = await service.remove(1);
     expect(result).toBe(1);
   });
+
+  it('should return a user by eamil if found', async () => {
+    const email = 'test@example.com';
+    const userMock = { id: 1, email, password: 'hashedPassword' } as User;
+
+    const spyUser = jest
+      .spyOn(userModelMock, 'findOne')
+      .mockResolvedValue(userMock);
+
+    const result = await service.findByEmail(email);
+    expect(result).toEqual(userMock);
+    expect(spyUser).toHaveBeenCalledWith({ where: { email } });
+  });
+
+  it('should return null if no user is found', async () => {
+    const email = 'notfound@example.com';
+
+    const spyUser = jest
+      .spyOn(userModelMock, 'findOne')
+      .mockResolvedValue(null);
+
+    const result = await service.findByEmail(email);
+    expect(result).toBeNull();
+    expect(spyUser).toHaveBeenCalledWith({ where: { email } });
+  });
 });

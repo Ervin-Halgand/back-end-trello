@@ -72,4 +72,8 @@ export class UsersService {
   async remove(id: number): Promise<number> {
     return await this.userModel.destroy({ where: { id } });
   }
+
+  async findByEmail(email: string) {
+    return await this.userModel.findOne({ where: { email } });
+  }
 }
