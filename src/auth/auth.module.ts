@@ -6,7 +6,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from 'src/users/users.module';
-import { HashingModule } from 'src/utils/hashing/hashing.module';
+import { HashingModule } from 'src/common/hashing/hashing.module';
+import { JwtStrategy } from './services/jwt-auth.service';
 
 @Module({
   imports: [
@@ -25,6 +26,6 @@ import { HashingModule } from 'src/utils/hashing/hashing.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}

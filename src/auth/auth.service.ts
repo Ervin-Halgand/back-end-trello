@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from 'src/users/models/user.model';
 import { UsersService } from '../users/users.service';
-import { HashingService } from '../utils/hashing/hashing.service';
+import { HashingService } from '../common/hashing/hashing.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 

@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { HashingService } from '../utils/hashing/hashing.service';
+import { HashingService } from '../common/hashing/hashing.service';
 
 @Injectable()
 export class UsersService {

@@ -6,9 +6,9 @@ import {
   ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { HashingService } from '../utils/hashing/hashing.service';
+import { HashingService } from '../common/hashing/hashing.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { HashingModule } from '../utils/hashing/hashing.module';
+import { HashingModule } from '../common/hashing/hashing.module';
 
 describe('UsersService', () => {
   let service: UsersService;

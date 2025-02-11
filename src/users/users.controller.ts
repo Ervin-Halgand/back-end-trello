@@ -3,16 +3,18 @@ import {
   Get,
   Post,
   Body,
-  Param,
   Delete,
   ValidationPipe,
-  ParseIntPipe,
   Patch,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthenticatedRequest } from 'src/common/types/authenticated_request.type';
 
 @ApiTags('Users')
 @Controller('users')
@@ -25,27 +27,27 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get(':id')
+  @Get()
   @ApiOperation({ summary: 'Retrieve a user' })
-  @ApiParam({ name: 'id', type: Number, description: 'User ID' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
+  @UseGuards(AuthGuard('jwt'))
+  findOne(@Req() payload: AuthenticatedRequest) {
+    return this.usersService.findOne(payload.user.id);
   }
 
-  @Patch(':id')
+  @Patch()
   @ApiOperation({ summary: 'Update a user' })
-  @ApiParam({ name: 'id', type: Number, description: 'User ID' })
+  @UseGuards(AuthGuard('jwt'))
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Req() payload: AuthenticatedRequest,
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,
   ) {
-    return this.usersService.update(id, updateUserDto);
+    return this.usersService.update(payload.user.id, updateUserDto);
   }
 
-  @Delete(':id')
+  @Delete()
   @ApiOperation({ summary: 'Delete a user' })
-  @ApiParam({ name: 'id', type: Number, description: 'User ID' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.remove(id);
+  @UseGuards(AuthGuard('jwt'))
+  remove(@Req() payload: AuthenticatedRequest) {
+    return this.usersService.remove(payload.user.id);
   }
 }
