@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { HashingService } from '../utils/hashing/hashing.service';
+import { HashingService } from '../common/hashing/hashing.service';
 
 @Injectable()
 export class UsersService {
@@ -71,5 +71,9 @@ export class UsersService {
 
   async remove(id: number): Promise<number> {
     return await this.userModel.destroy({ where: { id } });
+  }
+
+  async findByEmail(email: string) {
+    return await this.userModel.findOne({ where: { email } });
   }
 }

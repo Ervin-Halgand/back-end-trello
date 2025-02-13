@@ -44,6 +44,9 @@ $ DB_HOST=localhost
 $ DB_PORT=5432
 $ DB_USERNAME=*****
 $ DB_PASSWORD==*****
+$ DB_PASSWORD==*****
+$ JWT_SECRET==*****
+$ JWT_EXPIRATION=1d
 ```
 
 ## Compile and run the project

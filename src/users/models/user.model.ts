@@ -1,17 +1,14 @@
-import {
-  Table,
-  Column,
-  Model,
-  DataType,
-  PrimaryKey,
-  AutoIncrement,
-} from 'sequelize-typescript';
+import { Table, Column, Model, DataType } from 'sequelize-typescript';
 
 @Table
 export class User extends Model<User> {
-  @PrimaryKey
-  @AutoIncrement
-  @Column(DataType.INTEGER)
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    unique: true,
+    allowNull: false,
+  })
   id: number;
 
   @Column({

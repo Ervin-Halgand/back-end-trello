@@ -5,6 +5,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './models/user.model';
 import { ConflictException } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthenticatedRequest } from 'src/common/types/authenticated_request.type';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -70,44 +71,62 @@ describe('UsersController', () => {
 
   it('should return a user by id', async () => {
     const user = { id: 1, email: 'test@example.com' } as User;
+    const bearerTokenPayload = {
+      user: user,
+    } as unknown as AuthenticatedRequest;
 
     const spyService = jest.spyOn(service, 'findOne').mockResolvedValue(user);
 
-    expect(await controller.findOne(1)).toEqual(user);
+    expect(await controller.findOne(bearerTokenPayload)).toEqual(user);
     expect(spyService).toHaveBeenCalledWith(1);
   });
 
   it('should update an existing user', async () => {
     const updateUserDto: UpdateUserDto = { password: 'newPassword123' };
+    const userId = 1;
 
-    const updatedUser = { id: 1, name: 'halgand' } as UpdateUserDto;
+    const updatedUser = { id: userId, name: 'halgand' } as UpdateUserDto;
+
+    const bearerTokenPayload = {
+      user: { id: userId, email: 'test@example.com' },
+    } as unknown as AuthenticatedRequest;
 
     const spyService = jest
       .spyOn(service, 'update')
       .mockResolvedValue(updatedUser as User);
 
-    expect(await controller.update(1, updateUserDto)).toEqual(updatedUser);
+    expect(await controller.update(bearerTokenPayload, updateUserDto)).toEqual(
+      updatedUser,
+    );
     expect(spyService).toHaveBeenCalledWith(1, updateUserDto);
   });
 
   it('should throw ConflictException if user not found for update', async () => {
     const updateUserDto: UpdateUserDto = { password: 'newPassword123' };
 
+    const bearerTokenPayload = {
+      user: { id: 1, email: 'test@example.com' },
+    } as unknown as AuthenticatedRequest;
+
     jest
       .spyOn(service, 'update')
       .mockRejectedValue(new ConflictException('User not found'));
 
-    await expect(controller.update(1, updateUserDto)).rejects.toThrow(
-      ConflictException,
-    );
+    await expect(
+      controller.update(bearerTokenPayload, updateUserDto),
+    ).rejects.toThrow(ConflictException);
   });
 
   it('should remove a user by id', async () => {
     const userId = 1;
 
+    const bearerTokenPayload = {
+      user: { id: userId, email: 'test@example.com' },
+    } as unknown as AuthenticatedRequest;
+
     const spyService = jest.spyOn(service, 'remove').mockResolvedValue(userId);
 
-    expect(await controller.remove(userId)).toBe(userId);
+    expect(await controller.remove(bearerTokenPayload)).toBe(userId);
     expect(spyService).toHaveBeenCalledWith(userId);
   });
 });

@@ -6,9 +6,9 @@ import {
   ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { HashingService } from '../utils/hashing/hashing.service';
+import { HashingService } from '../common/hashing/hashing.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { HashingModule } from '../utils/hashing/hashing.module';
+import { HashingModule } from '../common/hashing/hashing.module';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -107,5 +107,30 @@ describe('UsersService', () => {
 
     const result = await service.remove(1);
     expect(result).toBe(1);
+  });
+
+  it('should return a user by eamil if found', async () => {
+    const email = 'test@example.com';
+    const userMock = { id: 1, email, password: 'hashedPassword' } as User;
+
+    const spyUser = jest
+      .spyOn(userModelMock, 'findOne')
+      .mockResolvedValue(userMock);
+
+    const result = await service.findByEmail(email);
+    expect(result).toEqual(userMock);
+    expect(spyUser).toHaveBeenCalledWith({ where: { email } });
+  });
+
+  it('should return null if no user is found', async () => {
+    const email = 'notfound@example.com';
+
+    const spyUser = jest
+      .spyOn(userModelMock, 'findOne')
+      .mockResolvedValue(null);
+
+    const result = await service.findByEmail(email);
+    expect(result).toBeNull();
+    expect(spyUser).toHaveBeenCalledWith({ where: { email } });
   });
 });
