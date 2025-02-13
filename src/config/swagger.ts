@@ -22,6 +22,7 @@ const initSwagger = ({
     .setTitle(title)
     .setDescription(description ?? '')
     .setVersion(version ?? '')
+    .addBearerAuth()
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
