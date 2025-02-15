@@ -5,15 +5,16 @@ import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from 'src/users/users.module';
 import { HashingModule } from 'src/common/hashing/hashing.module';
 import { JwtStrategy } from './services/jwt-auth.service';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { User } from 'src/users/models/user.model';
 
 @Module({
   imports: [
-    UsersModule,
     HashingModule,
     PassportModule,
+    SequelizeModule.forFeature([User]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
