@@ -3,8 +3,8 @@ import { IsInt, IsNotEmpty } from 'class-validator';
 
 export class AddMemberDto {
   @ApiProperty({
-    example: '20',
-    description: 'list id of the user to add',
+    example: 20,
+    description: 'ID of the user to add to the board',
     required: true,
   })
   @IsNotEmpty()

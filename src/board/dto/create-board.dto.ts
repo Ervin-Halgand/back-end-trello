@@ -1,13 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class CreateBoardDto {
   @ApiProperty({
-    example: 'project X',
-    description: 'name of the board',
+    example: 'Project X',
+    description: 'Title of the board',
     required: true,
   })
   @IsNotEmpty()
   @IsString()
+  @Length(3, 50)
   title: string;
 }
