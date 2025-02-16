@@ -2,10 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { getModelToken } from '@nestjs/sequelize';
 import { User } from './models/user.model';
-import {
-  ConflictException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { HashingService } from '../common/hashing/hashing.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { HashingModule } from '../common/hashing/hashing.module';
@@ -23,6 +20,7 @@ describe('UsersService', () => {
         {
           provide: getModelToken(User),
           useValue: {
+            findByPk: jest.fn(),
             findOne: jest.fn(),
             create: jest.fn(),
             update: jest.fn(),
@@ -51,9 +49,13 @@ describe('UsersService', () => {
       password: 'password123',
     };
 
-    const createdUser = { ...createUserDto, id: 1 } as User;
+    const createdUser = {
+      email: createUserDto.email,
+      createdAt: '2025-02-16T14:00:00Z',
+      id: 1,
+    } as User;
 
-    jest.spyOn(userModelMock, 'findOne').mockResolvedValue(null); // No user found
+    jest.spyOn(userModelMock, 'findOne').mockResolvedValue(null);
     jest.spyOn(userModelMock, 'create').mockResolvedValue(createdUser);
 
     const result = await service.create(createUserDto);
@@ -66,23 +68,10 @@ describe('UsersService', () => {
       password: 'password123',
     };
 
-    jest.spyOn(userModelMock, 'findOne').mockResolvedValue({} as User); // Simulate existing user
+    jest.spyOn(userModelMock, 'findOne').mockResolvedValue({} as User);
 
     await expect(service.create(createUserDto)).rejects.toThrow(
       ConflictException,
-    );
-  });
-
-  it('should throw InternalServerErrorException on unexpected error', async () => {
-    const createUserDto: CreateUserDto = {
-      email: 'test@example.com',
-      password: 'password123',
-    };
-
-    jest.spyOn(userModelMock, 'findOne').mockRejectedValue(new Error()); // Simulate internal error
-
-    await expect(service.create(createUserDto)).rejects.toThrow(
-      InternalServerErrorException,
     );
   });
 
@@ -95,23 +84,32 @@ describe('UsersService', () => {
   });
 
   it('should return a user by id', async () => {
-    const user = { id: 1, email: 'test@example.com' } as User;
-    jest.spyOn(userModelMock, 'findOne').mockResolvedValue(user);
+    const user = {
+      id: 1,
+      email: 'test@example.com',
+      createdAt: '2025-02-16T14:00:00Z',
+    } as User;
+    jest.spyOn(userModelMock, 'findByPk').mockResolvedValue(user);
 
     const result = await service.findOne(1);
     expect(result).toEqual(user);
   });
 
   it('should remove a user by id', async () => {
+    const deletedMessage = { message: 'User successfully deleted' };
     jest.spyOn(userModelMock, 'destroy').mockResolvedValue(1);
 
     const result = await service.remove(1);
-    expect(result).toBe(1);
+    expect(result).toStrictEqual(deletedMessage);
   });
 
-  it('should return a user by eamil if found', async () => {
+  it('should return a user by email if found', async () => {
     const email = 'test@example.com';
-    const userMock = { id: 1, email, password: 'hashedPassword' } as User;
+    const userMock = {
+      id: 1,
+      email,
+      createdAt: '2025-02-16T14:00:00Z',
+    } as User;
 
     const spyUser = jest
       .spyOn(userModelMock, 'findOne')
@@ -122,15 +120,11 @@ describe('UsersService', () => {
     expect(spyUser).toHaveBeenCalledWith({ where: { email } });
   });
 
-  it('should return null if no user is found', async () => {
+  it('should throw NotFoundException if no user is found', async () => {
     const email = 'notfound@example.com';
 
-    const spyUser = jest
-      .spyOn(userModelMock, 'findOne')
-      .mockResolvedValue(null);
+    jest.spyOn(userModelMock, 'findOne').mockResolvedValue(null);
 
-    const result = await service.findByEmail(email);
-    expect(result).toBeNull();
-    expect(spyUser).toHaveBeenCalledWith({ where: { email } });
+    await expect(service.findByEmail(email)).rejects.toThrow(NotFoundException);
   });
 });

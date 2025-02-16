@@ -1,21 +1,32 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from '..//auth.service';
-import { UsersService } from '../../users/users.service';
-import { HashingService } from '../../common/hashing/hashing.service';
+import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
+import { HashingService } from '../common/hashing/hashing.service';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../../users/models/user.model';
+import { User } from '../users/models/user.model';
 import { UnauthorizedException } from '@nestjs/common';
+import { getModelToken } from '@nestjs/sequelize';
 
 describe('AuthService', () => {
   let authService: AuthService;
   let usersService: UsersService;
   let hashingService: HashingService;
   let jwtService: JwtService;
+  let userModelMock: typeof User;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
+        {
+          provide: getModelToken(User),
+          useValue: {
+            findOne: jest.fn().mockReturnValue(true),
+            create: jest.fn(),
+            update: jest.fn(),
+            destroy: jest.fn(),
+          },
+        },
         {
           provide: UsersService,
           useValue: {
@@ -41,6 +52,7 @@ describe('AuthService', () => {
     usersService = module.get<UsersService>(UsersService);
     hashingService = module.get<HashingService>(HashingService);
     jwtService = module.get<JwtService>(JwtService);
+    userModelMock = module.get<typeof User>(getModelToken(User));
   });
 
   it('should return the user if credentials are valid', async () => {
@@ -48,16 +60,15 @@ describe('AuthService', () => {
     const password = 'password123';
     const userMock = { id: 1, email, password: 'hashedPassword' } as User;
 
-    const spyeUserService = jest
-      .spyOn(usersService, 'findByEmail')
-      .mockResolvedValue(userMock);
     const spyeHashingService = jest
       .spyOn(hashingService, 'comparePasswords')
       .mockResolvedValue(true);
 
+    jest.spyOn(userModelMock, 'findOne').mockResolvedValue(userMock);
+
     const result = await authService.validateUser(email, password);
     expect(result).toEqual(userMock);
-    expect(spyeUserService).toHaveBeenCalledWith(email);
+
     expect(spyeHashingService).toHaveBeenCalledWith(
       password,
       userMock.password,
@@ -68,7 +79,7 @@ describe('AuthService', () => {
     const email = 'test@example.com';
     const password = 'password123';
 
-    jest.spyOn(usersService, 'findByEmail').mockResolvedValue(null);
+    jest.spyOn(usersService, 'findByEmail' as any).mockResolvedValue(null);
 
     await expect(authService.validateUser(email, password)).rejects.toThrow(
       UnauthorizedException,

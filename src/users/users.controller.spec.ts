@@ -119,14 +119,16 @@ describe('UsersController', () => {
 
   it('should remove a user by id', async () => {
     const userId = 1;
+    const message = { message: `user ${userId} deleted successfully` };
 
     const bearerTokenPayload = {
       user: { id: userId, email: 'test@example.com' },
     } as unknown as AuthenticatedRequest;
 
-    const spyService = jest.spyOn(service, 'remove').mockResolvedValue(userId);
+    const spyService = jest.spyOn(service, 'remove').mockResolvedValue(message);
 
-    expect(await controller.remove(bearerTokenPayload)).toBe(userId);
+    expect(await controller.remove(bearerTokenPayload)).toBe(message);
     expect(spyService).toHaveBeenCalledWith(userId);
+    expect(spyService).toHaveBeenCalledTimes(1);
   });
 });

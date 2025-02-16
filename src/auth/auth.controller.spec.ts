@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UnauthorizedException } from '@nestjs/common';
 import { User } from '../users/models/user.model';
+import { getModelToken } from '@nestjs/sequelize';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -18,6 +19,15 @@ describe('AuthController', () => {
           useValue: {
             validateUser: jest.fn(),
             login: jest.fn(),
+          },
+        },
+        {
+          provide: getModelToken(User),
+          useValue: {
+            findOne: jest.fn(),
+            create: jest.fn(),
+            update: jest.fn(),
+            destroy: jest.fn(),
           },
         },
       ],

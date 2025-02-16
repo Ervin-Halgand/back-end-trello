@@ -12,6 +12,9 @@ import { Board } from './models/board.model';
 import { BoardMembers } from './models/boardMembers.model';
 import { PermissionService } from './services/permission.service';
 import { User } from '../users/models/user.model';
+import { BoardResponseDto } from './dto/reponses/board-response.dto';
+import { BoardMemberResponseDto } from './dto/reponses/board-member-response.dto';
+import { DeleteResponseDto } from './dto/reponses/delete-response.dto';
 
 @Injectable()
 export class BoardService {
@@ -22,14 +25,23 @@ export class BoardService {
     private readonly permissionService: PermissionService,
   ) {}
 
-  async create(createBoardDto: CreateBoardDto, userId: number) {
-    return await this.boardModel.create({
+  async create(
+    createBoardDto: CreateBoardDto,
+    userId: number,
+  ): Promise<BoardResponseDto> {
+    const board = await this.boardModel.create({
       ...createBoardDto,
       createdBy: userId,
     } as Board);
+
+    return {
+      id: board.id,
+      title: board.title,
+      createdBy: board.createdBy,
+    };
   }
 
-  async findAll(userId: number) {
+  async findAll(userId: number): Promise<BoardResponseDto[]> {
     const boards = await this.boardModel.findAll({
       include: [
         {
@@ -45,10 +57,14 @@ export class BoardService {
       nest: true,
     });
 
-    return boards.map(({ members, createdBy, ...board }) => board);
+    return boards.map((board) => ({
+      id: board.id,
+      title: board.title,
+      createdBy: board.createdBy,
+    }));
   }
 
-  private async getBoard(boardId: number) {
+  private async getBoard(boardId: number): Promise<Board> {
     const board = await this.boardModel.findByPk(boardId);
 
     if (!board) {
@@ -58,7 +74,7 @@ export class BoardService {
     return board;
   }
 
-  async findOne(boardId: number, userId: number) {
+  async findOne(boardId: number, userId: number): Promise<BoardResponseDto> {
     const board = await this.getBoard(boardId);
     await this.permissionService.checkPermission(
       board.createdBy,
@@ -67,10 +83,18 @@ export class BoardService {
       'get',
     );
 
-    return board;
+    return {
+      id: board.id,
+      title: board.title,
+      createdBy: board.createdBy,
+    };
   }
 
-  async addMember(boardId: number, userId: number, userTokenId: number) {
+  async addMember(
+    boardId: number,
+    userId: number,
+    userTokenId: number,
+  ): Promise<BoardMemberResponseDto> {
     const board = await this.getBoard(boardId);
     await this.permissionService.checkPermission(
       board.createdBy,
@@ -88,14 +112,22 @@ export class BoardService {
       throw new NotFoundException('User is already a member of this board');
     }
 
-    return this.boardMembersModel.create({ boardId, userId } as BoardMembers);
+    const newMember = await this.boardMembersModel.create({
+      boardId,
+      userId,
+    } as BoardMembers);
+
+    return {
+      boardId: newMember.boardId,
+      userId: newMember.userId,
+    };
   }
 
   async removeMember(
     boardId: number,
     userIdToRemove: number,
     userTokenId: number,
-  ) {
+  ): Promise<DeleteResponseDto> {
     const board = await this.getBoard(boardId);
     const isCreator = this.permissionService.isCreator(
       board.createdBy,
@@ -113,10 +145,17 @@ export class BoardService {
       throw new NotFoundException('Member not found in this board');
     }
 
-    return await memberToRemove.destroy();
+    await memberToRemove.destroy();
+
+    return {
+      message: `Member ${memberToRemove.id} successfully deleted from board ${board.title}`,
+    };
   }
 
-  async removeBoard(boardId: number, userTokenId: number) {
+  async removeBoard(
+    boardId: number,
+    userTokenId: number,
+  ): Promise<DeleteResponseDto> {
     const board = await this.getBoard(boardId);
     const isCreator = this.permissionService.isCreator(
       board.createdBy,
@@ -129,10 +168,12 @@ export class BoardService {
       );
     }
 
-    return await board.destroy();
+    await board.destroy();
+
+    return { message: 'Board successfully deleted' };
   }
 
-  async getMembers(boardId: number, userId: number) {
+  async getMembers(boardId: number, userId: number): Promise<BoardMembers[]> {
     const board = await this.getBoard(boardId);
     await this.permissionService.checkPermission(
       board.createdBy,
