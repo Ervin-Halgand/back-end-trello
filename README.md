@@ -32,13 +32,14 @@
 $ npm install
 ```
 
-## Initialization of database
+## Initialization of environment
 
 ```bash
 # .env
 $ create a .env file
 
 # init environment variables
+$ PORT=8080
 $ DB_NAME=trello
 $ DB_HOST=localhost
 $ DB_PORT=5432
@@ -46,8 +47,18 @@ $ DB_USERNAME=*****
 $ DB_PASSWORD==*****
 $ DB_PASSWORD==*****
 $ JWT_SECRET==*****
-$ JWT_EXPIRATION=1d
+$ JWT_EXPIRATION=**
 ```
+
+## 📖 API Documentation (Swagger)
+
+This project includes interactive API documentation powered by **Swagger**.
+
+### 🔗 Access the Swagger UI
+
+Once the server is running, open your browser and go to: **`http://localhost:8080/api`**
+
+The default Port is 3000 if you do not have setup the .env variable : **`http://localhost:3000/api`**
 
 # 📊 Database Schema
 
