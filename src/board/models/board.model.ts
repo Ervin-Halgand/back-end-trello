@@ -1,17 +1,19 @@
 import {
   BelongsToMany,
-  Column,
+  Column as SequelizeColumn,
   DataType,
   ForeignKey,
   Table,
   Model,
+  HasMany,
 } from 'sequelize-typescript';
 import { User } from '../../users/models/user.model';
 import { BoardMembers } from './boardMembers.model';
+import { Column } from '../column/models/Column.model';
 
 @Table
 export class Board extends Model<Board> {
-  @Column({
+  @SequelizeColumn({
     type: DataType.INTEGER,
     primaryKey: true,
     unique: true,
@@ -21,13 +23,13 @@ export class Board extends Model<Board> {
   id: number;
 
   @ForeignKey(() => User)
-  @Column({
+  @SequelizeColumn({
     type: DataType.INTEGER,
     allowNull: false,
   })
   createdBy: number;
 
-  @Column({
+  @SequelizeColumn({
     type: DataType.STRING,
     allowNull: false,
   })
@@ -35,4 +37,7 @@ export class Board extends Model<Board> {
 
   @BelongsToMany(() => User, () => BoardMembers)
   members: User[];
+
+  @HasMany(() => Column)
+  column: Column[];
 }

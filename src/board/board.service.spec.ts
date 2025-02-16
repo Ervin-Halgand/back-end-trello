@@ -6,8 +6,6 @@ import { PermissionService } from './services/permission.service';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
 import { getModelToken } from '@nestjs/sequelize';
 
-jest.mock('./services/permission.service'); // Mock only the PermissionService
-
 describe('BoardService', () => {
   let service: BoardService;
   let boardModel: typeof Board;

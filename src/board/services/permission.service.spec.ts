@@ -3,9 +3,6 @@ import { ForbiddenException } from '@nestjs/common';
 import { PermissionService } from './permission.service';
 import { BoardMembers } from '../models/boardMembers.model';
 
-// Mock de BoardMembers
-jest.mock('../models/boardMembers.model');
-
 describe('PermissionService', () => {
   let service: PermissionService;
 

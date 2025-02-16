@@ -10,10 +10,15 @@ export class PermissionService {
 
   // Vérifie si l'utilisateur est membre du board
   async isBoardMember(boardId: number, userId: number): Promise<boolean> {
-    const boardMember = await BoardMembers.findOne({
-      where: { boardId, userId },
-    });
-    return !!boardMember;
+    try {
+      const boardMember = await BoardMembers.findOne({
+        where: { boardId, userId },
+      });
+
+      return !!boardMember;
+    } catch {
+      return false;
+    }
   }
 
   // Vérifie si l'utilisateur a les autorisations nécessaires pour certaines actions
