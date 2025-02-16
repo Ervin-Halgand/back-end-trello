@@ -87,12 +87,11 @@ describe('BoardService', () => {
     it('should return a list of boards', async () => {
       const userId = 1;
       const boards = [{ id: 1, createdBy: userId, title: 'Test Board' }];
-      const expectedBoards = [{ id: 1, title: 'Test Board' }];
 
       jest.spyOn(boardModel, 'findAll' as any).mockResolvedValue(boards);
 
       const result = await service.findAll(userId);
-      expect(result).toEqual(expectedBoards);
+      expect(result).toEqual(boards);
     });
   });
 

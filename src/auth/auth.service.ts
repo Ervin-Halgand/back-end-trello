@@ -3,7 +3,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { User } from 'src/users/models/user.model';
+import { User } from '../users/models/user.model';
 import { HashingService } from '../common/hashing/hashing.service';
 import { LoginResponseDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
