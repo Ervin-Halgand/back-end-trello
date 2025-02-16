@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from '..//auth.service';
-import { UsersService } from '../../users/users.service';
-import { HashingService } from '../../common/hashing/hashing.service';
+import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
+import { HashingService } from '../common/hashing/hashing.service';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../../users/models/user.model';
+import { User } from '../users/models/user.model';
 import { UnauthorizedException } from '@nestjs/common';
 
 describe('AuthService', () => {
@@ -68,7 +68,7 @@ describe('AuthService', () => {
     const email = 'test@example.com';
     const password = 'password123';
 
-    jest.spyOn(usersService, 'findByEmail').mockResolvedValue(null);
+    jest.spyOn(usersService, 'findByEmail' as any).mockResolvedValue(null);
 
     await expect(authService.validateUser(email, password)).rejects.toThrow(
       UnauthorizedException,

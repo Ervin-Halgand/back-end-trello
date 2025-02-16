@@ -38,7 +38,9 @@ export class UsersController {
     status: 409,
     description: 'Conflict: User already exists.',
   })
-  create(@Body(ValidationPipe) createUserDto: CreateUserDto) {
+  create(
+    @Body(ValidationPipe) createUserDto: CreateUserDto,
+  ): Promise<UserResponseDto> {
     return this.usersService.create(createUserDto);
   }
 
@@ -55,7 +57,7 @@ export class UsersController {
     status: 404,
     description: 'User not found.',
   })
-  findOne(@Req() payload: AuthenticatedRequest) {
+  findOne(@Req() payload: AuthenticatedRequest): Promise<UserResponseDto> {
     return this.usersService.findOne(payload.user.id);
   }
 
@@ -75,7 +77,7 @@ export class UsersController {
   update(
     @Req() payload: AuthenticatedRequest,
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,
-  ) {
+  ): Promise<UserResponseDto> {
     return this.usersService.update(payload.user.id, updateUserDto);
   }
 
@@ -91,7 +93,7 @@ export class UsersController {
     status: 404,
     description: 'User not found.',
   })
-  remove(@Req() payload: AuthenticatedRequest) {
+  remove(@Req() payload: AuthenticatedRequest): Promise<{ message: string }> {
     return this.usersService.remove(payload.user.id);
   }
 }
