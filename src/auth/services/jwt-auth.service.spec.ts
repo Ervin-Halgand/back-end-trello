@@ -1,16 +1,14 @@
 import { JwtStrategy } from './jwt-auth.service';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayload } from '../dto/jwt.dto';
-import { ExtractJwt } from 'passport-jwt';
 
 describe('JwtStrategy', () => {
   let jwtStrategy: JwtStrategy;
   let configService: ConfigService;
-  let spy: any;
 
   beforeEach(() => {
     configService = new ConfigService();
-    spy = jest.spyOn(configService, 'get').mockImplementation((key: string) => {
+    jest.spyOn(configService, 'get').mockImplementation((key: string) => {
       if (key === 'JWT_SECRET') return 'test-secret';
       return null;
     });
