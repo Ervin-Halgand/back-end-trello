@@ -2,7 +2,6 @@ import {
   Controller,
   Post,
   Body,
-  Req,
   UseGuards,
   Param,
   Delete,
@@ -10,36 +9,33 @@ import {
   Get,
   Patch,
 } from '@nestjs/common';
-import { AuthenticatedRequest } from '../../common/types/authenticated_request.type';
+
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Column } from './models/Column.model';
 import { CreateColumnDto } from './dto/create-column.dto';
 import { RemoveColumnResponseDto } from './dto/responses/remove-column-response.dto';
 import { ColumnService } from './column.service';
+import { BoardMemberGuard } from '../guards/board-member.guard';
 
-@Controller('board/:boardId/column')
+@Controller('board/:id/column')
 export class ColumnController {
   constructor(private readonly columnService: ColumnService) {}
 
   @Post()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), BoardMemberGuard)
   @ApiOperation({ summary: 'Create a new column' })
   @ApiResponse({
     status: 201,
     description: 'The column has been successfully created.',
     type: Column,
   })
-  create(
-    @Param('boardId', ParseIntPipe) boardId: number,
-    @Req() payload: AuthenticatedRequest,
-    @Body() body: CreateColumnDto,
-  ) {
-    return this.columnService.create(boardId, payload.user.id, body.name);
+  create(@Param('id', ParseIntPipe) id: number, @Body() body: CreateColumnDto) {
+    return this.columnService.create(id, body.name);
   }
 
   @Get()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), BoardMemberGuard)
   @ApiOperation({ summary: 'Get all columns for a specific board' })
   @ApiResponse({
     status: 200,
@@ -47,15 +43,12 @@ export class ColumnController {
     type: Column,
     isArray: true,
   })
-  findAll(
-    @Param('boardId', ParseIntPipe) boardId: number,
-    @Req() payload: AuthenticatedRequest,
-  ) {
-    return this.columnService.findAll(boardId, payload.user.id);
+  findAll(@Param('id', ParseIntPipe) id: number) {
+    return this.columnService.findAll(id);
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), BoardMemberGuard)
   @ApiOperation({ summary: 'Get a specific column' })
   @ApiResponse({
     status: 200,
@@ -63,17 +56,12 @@ export class ColumnController {
     type: Column,
   })
   @ApiResponse({ status: 404, description: 'column not found' })
-  findOne(
-    @Param('boardId', ParseIntPipe) boardId: number,
-    @Param('id', ParseIntPipe) columnId: number,
-    @Req() payload: AuthenticatedRequest,
-  ) {
-    return this.columnService.findOne(columnId, boardId, payload.user.id);
+  findOne(@Param('id', ParseIntPipe) columnId: number) {
+    return this.columnService.findOne(columnId);
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard('jwt'))
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), BoardMemberGuard)
   @ApiOperation({ summary: 'Update a column' })
   @ApiResponse({
     status: 200,
@@ -81,21 +69,14 @@ export class ColumnController {
     type: Column,
   })
   update(
-    @Param('boardId', ParseIntPipe) boardId: number,
     @Param('id', ParseIntPipe) columnId: number,
     @Body() body: CreateColumnDto,
-    @Req() payload: AuthenticatedRequest,
   ) {
-    return this.columnService.update(
-      columnId,
-      boardId,
-      payload.user.id,
-      body.name,
-    );
+    return this.columnService.update(columnId, body.name);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), BoardMemberGuard)
   @ApiOperation({ summary: 'Delete a column' })
   @ApiResponse({
     status: 200,
@@ -103,11 +84,7 @@ export class ColumnController {
     type: RemoveColumnResponseDto,
   })
   @ApiResponse({ status: 404, description: 'column not found' })
-  remove(
-    @Param('id', ParseIntPipe) id: number,
-    @Param('boardId') boardId: number,
-    @Req() payload: AuthenticatedRequest,
-  ) {
-    return this.columnService.remove(id, boardId, payload.user.id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.columnService.remove(id);
   }
 }

@@ -21,7 +21,7 @@ describe('JwtStrategy', () => {
   });
 
   it('should validate and return payload', () => {
-    const payload: JwtPayload = { id: 1, email: 'test@example.com' };
-    expect(jwtStrategy.validate(payload)).toEqual(payload);
+    const payload: JwtPayload = { id: 1 };
+    expect(jwtStrategy.validate(payload)).toEqual(payload.id);
   });
 });
