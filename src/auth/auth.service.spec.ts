@@ -100,7 +100,7 @@ describe('AuthService', () => {
   });
 
   it('should return a login DTO with an access token', () => {
-    const userMock = { id: 1, email: 'test@example.com' } as User;
+    const userMock = { id: 1 } as User;
     const result = authService.login(userMock);
 
     const spyJwt = jest.spyOn(jwtService, 'sign');

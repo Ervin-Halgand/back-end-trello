@@ -19,7 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthenticatedRequest } from 'src/common/types/authenticated_request.type';
+import { AuthenticatedRequest } from '../common/types/authenticated_request.type';
 import { UserResponseDto } from './dto/responses/user-response.dto';
 import { User } from './models/user.model';
 
@@ -59,7 +59,7 @@ export class UsersController {
     description: 'User not found.',
   })
   findOne(@Req() payload: AuthenticatedRequest): Promise<User> {
-    return this.usersService.findOne(payload.user.id);
+    return this.usersService.findOne(payload.user);
   }
 
   @ApiBearerAuth()
@@ -79,7 +79,7 @@ export class UsersController {
     @Req() payload: AuthenticatedRequest,
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
-    return this.usersService.update(payload.user.id, updateUserDto);
+    return this.usersService.update(payload.user, updateUserDto);
   }
 
   @ApiBearerAuth()
@@ -95,6 +95,6 @@ export class UsersController {
     description: 'User not found.',
   })
   remove(@Req() payload: AuthenticatedRequest): Promise<{ message: string }> {
-    return this.usersService.remove(payload.user.id);
+    return this.usersService.remove(payload.user);
   }
 }

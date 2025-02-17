@@ -6,7 +6,6 @@ import { Board } from './models/board.model';
 import { UsersModule } from 'src/users/users.module';
 import { AuthModule } from 'src/auth/auth.module';
 
-import { PermissionService } from './services/permission.service';
 import { Module } from '@nestjs/common';
 import { User } from 'src/users/models/user.model';
 import { ColumnController } from './column/column.controller';
@@ -21,7 +20,7 @@ import { Column } from './column/models/Column.model';
     AuthModule,
   ],
   controllers: [BoardController, ColumnController],
-  providers: [BoardService, PermissionService, ColumnService],
+  providers: [BoardService, ColumnService],
   exports: [BoardService],
 })
 export class BoardModule {}

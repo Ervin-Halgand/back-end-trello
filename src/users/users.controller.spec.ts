@@ -45,7 +45,7 @@ describe('UsersController', () => {
       password: 'password123',
     };
 
-    const result = { ...createUserDto, id: 1 } as User;
+    const result = { ...createUserDto, id: 1 };
 
     const spyService = jest.spyOn(service, 'create').mockResolvedValue(result);
 
@@ -72,8 +72,8 @@ describe('UsersController', () => {
   it('should return a user by id', async () => {
     const user = { id: 1, email: 'test@example.com' } as User;
     const bearerTokenPayload = {
-      user: user,
-    } as unknown as AuthenticatedRequest;
+      user: user.id,
+    } as AuthenticatedRequest;
 
     const spyService = jest.spyOn(service, 'findOne').mockResolvedValue(user);
 
@@ -87,9 +87,7 @@ describe('UsersController', () => {
 
     const updatedUser = { id: userId, name: 'halgand' } as UpdateUserDto;
 
-    const bearerTokenPayload = {
-      user: { id: userId, email: 'test@example.com' },
-    } as unknown as AuthenticatedRequest;
+    const bearerTokenPayload = { user: userId } as AuthenticatedRequest;
 
     const spyService = jest
       .spyOn(service, 'update')
@@ -104,9 +102,7 @@ describe('UsersController', () => {
   it('should throw ConflictException if user not found for update', async () => {
     const updateUserDto: UpdateUserDto = { password: 'newPassword123' };
 
-    const bearerTokenPayload = {
-      user: { id: 1, email: 'test@example.com' },
-    } as unknown as AuthenticatedRequest;
+    const bearerTokenPayload = { user: 1 } as AuthenticatedRequest;
 
     jest
       .spyOn(service, 'update')
@@ -121,9 +117,7 @@ describe('UsersController', () => {
     const userId = 1;
     const message = { message: `user ${userId} deleted successfully` };
 
-    const bearerTokenPayload = {
-      user: { id: userId, email: 'test@example.com' },
-    } as unknown as AuthenticatedRequest;
+    const bearerTokenPayload = { user: userId } as AuthenticatedRequest;
 
     const spyService = jest.spyOn(service, 'remove').mockResolvedValue(message);
 

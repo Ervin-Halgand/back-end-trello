@@ -23,6 +23,8 @@ import {
 import { BoardResponseDto } from './dto/reponses/board-response.dto';
 import { DeleteResponseDto } from './dto/reponses/delete-response.dto';
 import { BoardMemberResponseDto } from './dto/reponses/board-member-response.dto';
+import { BoardCreatorGuard } from './guards/creator.guard';
+import { BoardMemberGuard } from './guards/board-member.guard';
 
 @ApiTags('Boards')
 @ApiBearerAuth()
@@ -43,11 +45,11 @@ export class BoardController {
     @Body() createBoardDto: CreateBoardDto,
     @Req() payload: AuthenticatedRequest,
   ): Promise<BoardResponseDto> {
-    return this.boardService.create(createBoardDto, payload.user.id);
+    return this.boardService.create(createBoardDto, payload.user);
   }
 
   @Post(':id/member')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), BoardMemberGuard)
   @ApiOperation({ summary: 'Add a member to a board' })
   @ApiResponse({
     status: 201,
@@ -59,13 +61,8 @@ export class BoardController {
   addMember(
     @Param('id', ParseIntPipe) boardId: number,
     @Body() addMember: AddMemberDto,
-    @Req() payload: AuthenticatedRequest,
   ): Promise<BoardMemberResponseDto> {
-    return this.boardService.addMember(
-      boardId,
-      addMember.userId,
-      payload.user.id,
-    );
+    return this.boardService.addMember(boardId, addMember.userId);
   }
 
   @Get()
@@ -79,11 +76,11 @@ export class BoardController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   findAll(@Req() payload: AuthenticatedRequest): Promise<BoardResponseDto[]> {
-    return this.boardService.findAll(payload.user.id);
+    return this.boardService.findAll(payload.user);
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), BoardMemberGuard)
   @ApiOperation({ summary: 'Get a board by ID' })
   @ApiResponse({
     status: 200,
@@ -94,13 +91,12 @@ export class BoardController {
   @ApiResponse({ status: 403, description: 'Forbidden' })
   findOne(
     @Param('id', ParseIntPipe) boardId: number,
-    @Req() payload: AuthenticatedRequest,
   ): Promise<BoardResponseDto> {
-    return this.boardService.findOne(boardId, payload.user.id);
+    return this.boardService.findOne(boardId);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), BoardCreatorGuard)
   @ApiOperation({ summary: 'Delete a board' })
   @ApiResponse({
     status: 200,
@@ -113,13 +109,12 @@ export class BoardController {
   })
   removeBoard(
     @Param('id', ParseIntPipe) boardId: number,
-    @Req() payload: AuthenticatedRequest,
   ): Promise<DeleteResponseDto> {
-    return this.boardService.removeBoard(boardId, payload.user.id);
+    return this.boardService.removeBoard(boardId);
   }
 
   @Delete(':id/member/:userId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), BoardCreatorGuard)
   @ApiOperation({ summary: 'Remove a member from a board' })
   @ApiResponse({
     status: 200,
@@ -132,12 +127,7 @@ export class BoardController {
   removeMember(
     @Param('id', ParseIntPipe) boardId: number,
     @Param('userId', ParseIntPipe) userIdToRemove: number,
-    @Req() payload: AuthenticatedRequest,
   ): Promise<DeleteResponseDto> {
-    return this.boardService.removeMember(
-      boardId,
-      userIdToRemove,
-      payload.user.id,
-    );
+    return this.boardService.removeMember(boardId, userIdToRemove);
   }
 }

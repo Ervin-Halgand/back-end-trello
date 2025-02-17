@@ -38,9 +38,7 @@ describe('BoardController', () => {
     const userId = 1;
     const spy = jest.spyOn(service, 'create');
 
-    await controller.create(dto, {
-      user: { id: userId },
-    } as AuthenticatedRequest);
+    await controller.create(dto, { user: userId } as AuthenticatedRequest);
 
     expect(spy).toHaveBeenCalledWith(dto, userId);
     expect(spy).toHaveBeenCalledTimes(1);
@@ -50,7 +48,7 @@ describe('BoardController', () => {
     const userId = 1;
     const spy = jest.spyOn(service, 'findAll');
 
-    await controller.findAll({ user: { id: userId } } as AuthenticatedRequest);
+    await controller.findAll({ user: userId } as AuthenticatedRequest);
 
     expect(spy).toHaveBeenCalledWith(userId);
     expect(spy).toHaveBeenCalledTimes(1);
@@ -58,56 +56,47 @@ describe('BoardController', () => {
 
   it('should call service.findOne', async () => {
     const boardId = 1;
-    const userId = 2;
     const spy = jest.spyOn(service, 'findOne');
 
-    await controller.findOne(boardId, {
-      user: { id: userId },
-    } as AuthenticatedRequest);
+    await controller.findOne(boardId);
 
-    expect(spy).toHaveBeenCalledWith(boardId, userId);
+    expect(spy).toHaveBeenCalledWith(boardId);
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('should call service.addMember', async () => {
     const boardId = 1;
     const userId = 2;
-    const userTokenId = 3;
+
     const dto = { userId };
     const spy = jest.spyOn(service, 'addMember');
 
-    await controller.addMember(boardId, dto, {
-      user: { id: userTokenId },
-    } as AuthenticatedRequest);
+    await controller.addMember(boardId, dto);
 
-    expect(spy).toHaveBeenCalledWith(boardId, userId, userTokenId);
+    expect(spy).toHaveBeenCalledWith(boardId, userId);
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('should call service.removeMember', async () => {
     const boardId = 1;
     const userIdToRemove = 2;
-    const userTokenId = 3;
+
     const spy = jest.spyOn(service, 'removeMember');
 
-    await controller.removeMember(boardId, userIdToRemove, {
-      user: { id: userTokenId },
-    } as AuthenticatedRequest);
+    await controller.removeMember(boardId, userIdToRemove);
 
-    expect(spy).toHaveBeenCalledWith(boardId, userIdToRemove, userTokenId);
+    expect(spy).toHaveBeenCalledWith(boardId, userIdToRemove);
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('should call service.removeBoard', async () => {
     const boardId = 1;
-    const userTokenId = 2;
+
     const spy = jest.spyOn(service, 'removeBoard');
 
-    await controller.removeBoard(boardId, {
-      user: { id: userTokenId },
-    } as AuthenticatedRequest);
+    await controller.removeBoard(boardId);
 
-    expect(spy).toHaveBeenCalledWith(boardId, userTokenId);
+    expect(spy).toHaveBeenCalledWith(boardId);
     expect(spy).toHaveBeenCalledTimes(1);
   });
 });
