@@ -40,20 +40,19 @@ export class BoardService {
           model: User,
           where: { id: userId },
           required: false,
+          attributes: [],
         },
       ],
       where: {
-        [Op.or]: [{ createdBy: userId }, { '$members.id$': userId }],
+        [Op.or]: [
+          { createdBy: userId }, // If the user is the board creator
+          { '$members.id$': userId }, // If the user is a board member (access User table and check on 'Id')
+        ],
       },
-      raw: true,
-      nest: true,
+      attributes: ['id', 'title', 'createdBy'],
     });
 
-    return boards.map((board) => ({
-      id: board.id,
-      title: board.title,
-      createdBy: board.createdBy,
-    }));
+    return boards;
   }
 
   private async getBoard(boardId: number): Promise<Board> {
