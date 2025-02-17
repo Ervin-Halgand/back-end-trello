@@ -1,4 +1,5 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
+import { Board } from 'src/board/models/board.model';
 
 @Table
 export class User extends Model<User> {
@@ -35,4 +36,7 @@ export class User extends Model<User> {
     allowNull: false,
   })
   password: string;
+
+  @HasMany(() => Board)
+  column: Board[];
 }

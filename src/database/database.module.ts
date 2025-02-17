@@ -15,6 +15,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         database: configService.get<string>('DB_NAME'),
         autoLoadModels: true,
         synchronize: true,
+        define: {
+          underscored: true,
+        },
       }),
       inject: [ConfigService],
     }),
