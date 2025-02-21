@@ -7,7 +7,7 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 import { Column as ColumnModel } from '../../models/Column.model';
-import { User } from 'src/users/models/user.model';
+import { User } from '../../../../users/models/user.model';
 
 @Table
 export class Cards extends Model<Cards> {

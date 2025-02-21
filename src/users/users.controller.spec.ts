@@ -5,7 +5,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './models/user.model';
 import { ConflictException } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthenticatedRequest } from 'src/common/types/authenticated_request.type';
+import { AuthenticatedRequest } from '../common/types/authenticated_request.type';
 
 describe('UsersController', () => {
   let controller: UsersController;

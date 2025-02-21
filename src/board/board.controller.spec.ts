@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BoardController } from './board.controller';
 import { BoardService } from './board.service';
-import { AuthenticatedRequest } from 'src/common/types/authenticated_request.type';
+import { AuthenticatedRequest } from '../../src/common/types/authenticated_request.type';
 
 describe('BoardController', () => {
   let controller: BoardController;
