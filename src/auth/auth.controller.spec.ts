@@ -3,8 +3,9 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UnauthorizedException } from '@nestjs/common';
-import { User } from '../users/models/user.model';
 import { getModelToken } from '@nestjs/sequelize';
+import { User } from '../users/models/user.model';
+import { AuthenticatedRequest } from '../../src/common/types/authenticated_request.type';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -19,6 +20,7 @@ describe('AuthController', () => {
           useValue: {
             validateUser: jest.fn(),
             login: jest.fn(),
+            refreshToken: jest.fn(),
           },
         },
         {
@@ -43,24 +45,19 @@ describe('AuthController', () => {
       password: 'password123',
     };
 
-    const userMock = { id: 1, email: credentials.email } as User;
-    const accessTokenMock = { accessToken: 'mockedAccessToken' };
+    const accessTokenMock = {
+      accessToken: 'mockedAccessToken',
+      refreshAccessToken: 'mockedRefreshToken',
+    };
 
-    const spyAuthValidateUser = jest
-      .spyOn(authService, 'validateUser')
-      .mockResolvedValue(userMock);
-    const spyAuthLogin = jest
+    const spy = jest
       .spyOn(authService, 'login')
-      .mockReturnValue(accessTokenMock);
+      .mockResolvedValue(accessTokenMock);
 
     const result = await authController.login(credentials);
 
     expect(result).toEqual(accessTokenMock);
-    expect(spyAuthValidateUser).toHaveBeenCalledWith(
-      credentials.email,
-      credentials.password,
-    );
-    expect(spyAuthLogin).toHaveBeenCalledWith(userMock);
+    expect(spy).toHaveBeenCalledWith(credentials);
   });
 
   it('should throw UnauthorizedException if validation fails', async () => {
@@ -70,11 +67,30 @@ describe('AuthController', () => {
     };
 
     jest
-      .spyOn(authService, 'validateUser')
+      .spyOn(authService, 'login')
       .mockRejectedValue(new UnauthorizedException('Invalid credentials'));
 
     await expect(authController.login(credentials)).rejects.toThrow(
       UnauthorizedException,
     );
+  });
+
+  it('should return a new access token on refresh', () => {
+    const mockRequest: AuthenticatedRequest = {
+      user: 1,
+    } as AuthenticatedRequest;
+
+    const newTokenMock = {
+      accessToken: 'newMockedAccessToken',
+      refreshAccessToken: 'newMockedRefreshToken',
+    };
+    const spy = jest
+      .spyOn(authService, 'refreshToken')
+      .mockReturnValue(newTokenMock);
+
+    const result = authController.refresh(mockRequest);
+
+    expect(result).toEqual(newTokenMock);
+    expect(spy).toHaveBeenCalledWith(mockRequest.user);
   });
 });

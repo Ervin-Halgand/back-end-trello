@@ -1,5 +1,5 @@
 import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
-import { Board } from 'src/board/models/board.model';
+import { Board } from '../../board/models/board.model';
 
 @Table
 export class User extends Model<User> {

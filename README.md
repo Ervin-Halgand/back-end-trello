@@ -48,6 +48,8 @@ $ DB_PASSWORD==*****
 $ DB_PASSWORD==*****
 $ JWT_SECRET==*****
 $ JWT_EXPIRATION=**
+$ REFRESH_JWT_SECRET===*****
+$ REFRESH_JWT_EXPIRATION=**
 ```
 
 ## 📖 API Documentation (Swagger)
@@ -58,13 +60,13 @@ This project includes interactive API documentation powered by **Swagger**.
 
 Once the server is running, open your browser and go to: **`http://localhost:8080/api`**
 
-The default Port is 3000 if you do not have setup the .env variable : **`http://localhost:3000/api`**
+![Swagger documentation](./src/documentation/swagger.png)
 
 # 📊 Database Schema
 
 The database is based on a relational structure comprising four main entities:
 
-![database diagram](./src/database/db_diagram.png)
+![Database diagram](./src/database/db_diagram.png)
 
 ## Compile and run the project
 
@@ -84,9 +86,6 @@ $ npm run start:prod
 ```bash
 # unit tests
 $ npm run test
-
-# e2e tests
-$ npm run test:e2e
 
 # test coverage
 $ npm run test:cov

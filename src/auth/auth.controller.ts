@@ -1,8 +1,22 @@
-import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { LoginResponseDto } from './dto/login.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthenticatedRequest } from '../../src/common/types/authenticated_request.type';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -27,11 +41,23 @@ export class AuthController {
   async login(
     @Body(ValidationPipe) credentials: CreateUserDto,
   ): Promise<LoginResponseDto> {
-    const user = await this.authService.validateUser(
-      credentials.email,
-      credentials.password,
-    );
+    return this.authService.login(credentials);
+  }
 
-    return this.authService.login(user);
+  @Post('refresh')
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: 'Refresh token is valid and return a new token.',
+    type: LoginResponseDto,
+  })
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @UseGuards(AuthGuard('jwt-refresh'))
+  refresh(@Req() payload: AuthenticatedRequest): LoginResponseDto {
+    return this.authService.refreshToken(payload.user);
   }
 }
