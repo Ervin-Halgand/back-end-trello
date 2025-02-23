@@ -5,11 +5,12 @@ import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { HashingModule } from '../../src/common/hashing/hashing.module';
+
 import { JwtStrategy } from './services/jwt-auth.service';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { User } from '../../src/users/models/user.model';
+import { User } from '../users/models/user.model';
 import { RefreshJwtStrategy } from './services/refresh-jwt-auth.service';
+import { HashingModule } from '../common/hashing/hashing.module';
 
 @Module({
   imports: [

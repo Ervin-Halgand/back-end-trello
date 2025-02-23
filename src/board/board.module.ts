@@ -3,11 +3,11 @@ import { BoardController } from './board.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { BoardMembers } from './models/boardMembers.model';
 import { Board } from './models/board.model';
-import { UsersModule } from '../../src/users/users.module';
-import { AuthModule } from '../../src/auth/auth.module';
+import { UsersModule } from '../users/users.module';
+import { AuthModule } from '../auth/auth.module';
 
 import { Module } from '@nestjs/common';
-import { User } from '../../src/users/models/user.model';
+import { User } from '..//users/models/user.model';
 import { ColumnController } from './column/column.controller';
 
 import { ColumnService } from './column/column.service';
