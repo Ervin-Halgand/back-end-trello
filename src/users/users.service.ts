@@ -64,8 +64,11 @@ export class UsersService {
     };
   }
 
-  async findOne(id: number): Promise<User> {
-    const user = await this.userModel.findByPk(id);
+  async findOne(id: number): Promise<UserResponseDto> {
+    const user = await this.userModel.findOne({
+      where: { id },
+      attributes: ['id', 'email', 'createdAt', 'updatedAt'],
+    });
 
     if (!user) {
       throw new NotFoundException('User not found');

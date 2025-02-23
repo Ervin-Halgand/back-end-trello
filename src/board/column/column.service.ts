@@ -3,21 +3,18 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Column } from './models/Column.model';
 
-import { Board } from '../models/board.model';
 import { RemoveColumnResponseDto } from './dto/responses/remove-column-response.dto';
+import { GetColumnResponseDto } from './dto/responses/get-column-response.dto';
 
 @Injectable()
 export class ColumnService {
-  constructor(
-    @InjectModel(Column) private ColumnModel: typeof Column,
-    @InjectModel(Board) private boardModel: typeof Board,
-  ) {}
+  constructor(@InjectModel(Column) private ColumnModel: typeof Column) {}
 
-  async create(boardId: number, name: string): Promise<Column> {
+  async create(boardId: number, name: string): Promise<GetColumnResponseDto> {
     return await this.ColumnModel.create({ boardId, name });
   }
 
-  async findAll(boardId: number): Promise<Column[]> {
+  async findAll(boardId: number): Promise<GetColumnResponseDto[]> {
     return await this.ColumnModel.findAll({ where: { boardId } });
   }
 

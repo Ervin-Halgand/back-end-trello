@@ -21,7 +21,6 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticatedRequest } from '../common/types/authenticated_request.type';
 import { UserResponseDto } from './dto/responses/user-response.dto';
-import { User } from './models/user.model';
 
 @ApiTags('Users')
 @Controller('users')
@@ -52,13 +51,13 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: 'The user has been successfully retrieved.',
-    type: User,
+    type: UserResponseDto,
   })
   @ApiResponse({
     status: 404,
     description: 'User not found.',
   })
-  findOne(@Req() payload: AuthenticatedRequest): Promise<User> {
+  findOne(@Req() payload: AuthenticatedRequest): Promise<UserResponseDto> {
     return this.usersService.findOne(payload.user);
   }
 

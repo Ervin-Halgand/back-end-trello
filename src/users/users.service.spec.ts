@@ -88,8 +88,9 @@ describe('UsersService', () => {
       id: 1,
       email: 'test@example.com',
       createdAt: '2025-02-16T14:00:00Z',
+      updatedAt: '2025-03-16T14:00:00Z',
     } as User;
-    jest.spyOn(userModelMock, 'findByPk').mockResolvedValue(user);
+    jest.spyOn(userModelMock, 'findOne').mockResolvedValue(user);
 
     const result = await service.findOne(1);
     expect(result).toEqual(user);

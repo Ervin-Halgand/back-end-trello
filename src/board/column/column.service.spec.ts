@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ColumnService } from './column.service';
 import { Column } from './models/Column.model';
-import { Board } from '../models/board.model';
 import { NotFoundException } from '@nestjs/common';
 import { getModelToken } from '@nestjs/sequelize';
 
@@ -21,12 +20,6 @@ describe('ColumnService', () => {
             findAll: jest.fn(),
             update: jest.fn(),
             destroy: jest.fn(),
-          },
-        },
-        {
-          provide: getModelToken(Board),
-          useValue: {
-            findByPk: jest.fn(),
           },
         },
       ],

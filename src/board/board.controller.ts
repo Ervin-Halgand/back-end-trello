@@ -12,7 +12,7 @@ import {
 import { BoardService } from './board.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthenticatedRequest } from '../../src/common/types/authenticated_request.type';
+import { AuthenticatedRequest } from '../common/types/authenticated_request.type';
 import { AddMemberDto } from './dto/add-member.dto';
 import {
   ApiBearerAuth,
