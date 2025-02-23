@@ -11,13 +11,22 @@ import {
 } from '@nestjs/common';
 
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Column } from './models/Column.model';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiParam,
+} from '@nestjs/swagger';
 import { CreateColumnDto } from './dto/create-column.dto';
 import { RemoveColumnResponseDto } from './dto/responses/remove-column-response.dto';
 import { ColumnService } from './column.service';
 import { BoardMemberGuard } from '../guards/board-member.guard';
+import { GetColumnResponseDto } from './dto/responses/get-column-response.dto';
 
+@ApiTags('Boards')
+@ApiBearerAuth()
+@ApiParam({ name: 'id', type: Number })
 @Controller('board/:id/column')
 export class ColumnController {
   constructor(private readonly columnService: ColumnService) {}
@@ -28,7 +37,7 @@ export class ColumnController {
   @ApiResponse({
     status: 201,
     description: 'The column has been successfully created.',
-    type: Column,
+    type: GetColumnResponseDto,
   })
   create(@Param('id', ParseIntPipe) id: number, @Body() body: CreateColumnDto) {
     return this.columnService.create(id, body.name);
@@ -40,42 +49,42 @@ export class ColumnController {
   @ApiResponse({
     status: 200,
     description: 'column of all columns',
-    type: Column,
+    type: GetColumnResponseDto,
     isArray: true,
   })
   findAll(@Param('id', ParseIntPipe) id: number) {
     return this.columnService.findAll(id);
   }
 
-  @Get(':id')
+  @Get(':columnId')
   @UseGuards(AuthGuard('jwt'), BoardMemberGuard)
   @ApiOperation({ summary: 'Get a specific column' })
   @ApiResponse({
     status: 200,
     description: 'The requested column',
-    type: Column,
+    type: GetColumnResponseDto,
   })
   @ApiResponse({ status: 404, description: 'column not found' })
-  findOne(@Param('id', ParseIntPipe) columnId: number) {
+  findOne(@Param('columnId', ParseIntPipe) columnId: number) {
     return this.columnService.findOne(columnId);
   }
 
-  @Patch(':id')
+  @Patch(':columnId')
   @UseGuards(AuthGuard('jwt'), BoardMemberGuard)
   @ApiOperation({ summary: 'Update a column' })
   @ApiResponse({
     status: 200,
     description: 'The column has been successfully updated.',
-    type: Column,
+    type: GetColumnResponseDto,
   })
   update(
-    @Param('id', ParseIntPipe) columnId: number,
+    @Param('columnId', ParseIntPipe) columnId: number,
     @Body() body: CreateColumnDto,
   ) {
     return this.columnService.update(columnId, body.name);
   }
 
-  @Delete(':id')
+  @Delete(':columnId')
   @UseGuards(AuthGuard('jwt'), BoardMemberGuard)
   @ApiOperation({ summary: 'Delete a column' })
   @ApiResponse({
@@ -84,7 +93,7 @@ export class ColumnController {
     type: RemoveColumnResponseDto,
   })
   @ApiResponse({ status: 404, description: 'column not found' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.columnService.remove(id);
+  remove(@Param('columnId', ParseIntPipe) columnId: number) {
+    return this.columnService.remove(columnId);
   }
 }
